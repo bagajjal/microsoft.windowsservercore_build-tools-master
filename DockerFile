@@ -1,10 +1,10 @@
-FROM travisez13/microsoft.windowsservercore.cmake:latest
+FROM travisez13/microsoft.windowsservercore.win10sdk:latest
 LABEL maintainer='Travis Plunk <github@ez13.net>'
-LABEL readme.md="https://github.com/TravisEz13/docker/blob/master/microsoft/windowsservercore/git/readme.md"
-LABEL description="This Dockerfile for Windows Server Core with git installed via chocolatey.  See readme on docker hub for licensing."
+LABEL readme.md="https://github.com/TravisEz13/microsoft.windowsservercore_build-tools/blob/master/readme.md"
+LABEL description="This Dockerfile for Windows Server Core with various build tools installed.  See readme on docker hub for licensing."
 
+COPY dockerInstall.psm1 /
 COPY visualcppbuildtools/ visualcppbuildtools/
 SHELL ["powershell"]
-RUN visualcppbuildtools/installvisualcppbuildtools.ps1 ; \
-    visualcppbuildtools/setvcbuildtoolsenv.ps1 ; \
-    Remove-Item visualcppbuildtools -Recurse -force
+RUN Import-Module ./dockerInstall.psm1; \
+    visualcppbuildtools/installvisualcppbuildtoolsv2.ps1
