@@ -7,4 +7,6 @@ COPY dockerInstall.psm1 /
 COPY visualcppbuildtools/ visualcppbuildtools/
 SHELL ["powershell"]
 RUN Import-Module ./dockerInstall.psm1; \
-    visualcppbuildtools/installvisualcppbuildtoolsv2.ps1
+    visualcppbuildtools/installvisualcppbuildtoolsv2.ps1; \
+    Install-ChocolateyPackage -PackageName wixtoolset
+COPY containerTests/ containerTests/
