@@ -21,3 +21,4 @@ docker build $tagParams $PSScriptRoot
 $endTime = Get-date
 [timespan] $duration = $endTime - $startTime
 Write-Verbose "Build took $($duration.TotalMinutes) minutes" -Verbose
+Invoke-Pester "$PSScriptRoot\tests"
