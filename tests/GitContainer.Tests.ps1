@@ -1,17 +1,12 @@
-$repoName = &"$psscriptroot\..\reponame.ps1"
-Describe "Tests in Container $repoName pass"{
-    BeforeAll{
-        $resultFileName = 'results.xml'
-        $resolvedTestDrive = (Resolve-Path "Testdrive:\").providerPath
-        $resolvedXmlPath = Join-Path $resolvedTestDrive -ChildPath $resultFileName
-        $containerTestDrive = 'C:\test'        
-        $containerXmlPath = Join-Path $containerTestDrive -ChildPath $resultFileName
-    }
-    it "Running tests should produce xml" {
-        docker run --rm -v "${resolvedTestDrive}:$containerTestDrive" $repoName Invoke-Pester .\containerTests -OutputFile $containerXmlPath -OutputFormat NUnitXml
-        $resolvedXmlPath | should exist
-    }
-    [xml]$result= (Get-Content -raw $resolvedXmlPath)
+function Write-TestResults
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $resultPath
+    )
+
+    [xml]$result= (Get-Content -raw $resultPath)
     # switch between methods, SelectNode is not available on dotnet core
     if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] ) {
         $testCases = [System.Xml.XmlDocumentXPathExtensions]::SelectNodes($result."test-results",'.//test-case')
@@ -51,5 +46,37 @@ Describe "Tests in Container $repoName pass"{
                 }
             }
         }
-    }    
+    }        
+}
+$repoName = &"$psscriptroot\..\reponame.ps1"
+Describe "Tests in Container $repoName pass"{
+    BeforeAll{
+        $resultFileName = 'results.xml'
+        $resolvedTestDrive = (Resolve-Path "Testdrive:\").providerPath
+        $resolvedXmlPath = Join-Path $resolvedTestDrive -ChildPath $resultFileName
+        $containerTestDrive = 'C:\test'        
+        $containerXmlPath = Join-Path $containerTestDrive -ChildPath $resultFileName
+    }
+    BeforeEach
+    {
+        Remove-Item $resolvedXmlPath -ErrorAction SilentlyContinue
+    }
+    
+    it "Running tests should produce xml" {
+        docker run --rm -v "${resolvedTestDrive}:$containerTestDrive" $repoName Invoke-Pester .\containerFiles\Tests -OutputFile $containerXmlPath -OutputFormat NUnitXml
+        $resolvedXmlPath | should exist
+    }
+    if(test-Path $resolvedXmlPath)
+    {
+        Write-TestResults -resultPath $resolvedXmlPath
+    }
+
+    it "Running tests should produce xml in container with 4GB RAM" {
+        docker run --rm -v "${resolvedTestDrive}:$containerTestDrive" -m 3968m $repoName Invoke-Pester .\containerFiles\Tests -OutputFile $containerXmlPath -OutputFormat NUnitXml
+        $resolvedXmlPath | should exist
+    }
+    if(test-Path $resolvedXmlPath)
+    {
+        Write-TestResults -resultPath $resolvedXmlPath
+    }
 }
