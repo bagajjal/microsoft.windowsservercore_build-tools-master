@@ -10,9 +10,9 @@ SHELL ["powershell"]
 # nuget installs to C:\ProgramData\chocolatey\bin\NuGet.exe
 # Cmake installs to C:\Program Files\CMake\
 COPY containerFiles/dockerInstall.psm1 containerFiles/dockerInstall.psm1
-RUN Import-Module ./containerFiles/dockerInstall.psm1; \
-    Install-ChocolateyPackage -PackageName git -Executable git.exe; \
-    Install-ChocolateyPackage -PackageName nuget.commandline -Executable nuget.exe; \
+RUN Import-Module ./containerFiles/dockerInstall.psm1; `
+    Install-ChocolateyPackage -PackageName git -Executable git.exe; `
+    Install-ChocolateyPackage -PackageName nuget.commandline -Executable nuget.exe; `
     Install-ChocolateyPackage -PackageName cmake.install -Executable cmake.exe
 
 FROM microsoft/powershell:windowsservercore
@@ -26,21 +26,21 @@ COPY --from=0 C:/ProgramData/chocolatey/bin/ C:/ProgramData/chocolatey/bin/
 
 # Setup the path
 COPY containerFiles/dockerInstall.psm1 containerFiles/dockerInstall.psm1
-RUN Import-Module ./containerFiles/dockerInstall.psm1; \
-    Append-Path -path C:\Program Files\Git; \
-    Append-Path -path C:\Program Files\CMake; \
-    Append-Path -path C:/ProgramData/chocolatey/bin/; \
+RUN Import-Module ./containerFiles/dockerInstall.psm1; `
+    Append-Path -path C:\Program Files\Git; `
+    Append-Path -path C:\Program Files\CMake; `
+    Append-Path -path C:/ProgramData/chocolatey/bin/; `
     Install-ChocolateyPackage -PackageName wixtoolset  -Cleanup -ExecutionTimeout 5400
 
 
 # Install Win 10 SDK
 COPY containerFiles/win10sdk.psm1 containerFiles/win10sdk.psm1
-RUN Import-Module ./containerFiles/win10sdk.psm1; \
+RUN Import-Module ./containerFiles/win10sdk.psm1; `
     Install-Win10Sdk
 
 # install VCpp build tools
 COPY containerFiles/vcBuildTools.psm1 containerFiles/vcBuildTools.psm1
-RUN Import-Module ./containerFiles/vcBuildTools.psm1; \   
+RUN Import-Module ./containerFiles/vcBuildTools.psm1; `
     Install-VcBuildTools
 
 # copy tests to verify containter     
