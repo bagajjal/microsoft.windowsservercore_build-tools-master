@@ -4,16 +4,23 @@ LABEL readme.md="https://github.com/TravisEz13/microsoft.windowsservercore_build
 LABEL description="This Dockerfile for Windows Server Core with various build tools installed.  See readme on docker hub for licensing."
 
 SHELL ["powershell"]
+# Install Git, NuGet, cMake and WixToolSet
 COPY containerFiles/dockerInstall.psm1 containerFiles/dockerInstall.psm1
 RUN Import-Module ./containerFiles/dockerInstall.psm1; \
     Install-ChocolateyPackage -PackageName git -Executable git.exe; \
     Install-ChocolateyPackage -PackageName nuget.commandline -Executable nuget.exe; \
     Install-ChocolateyPackage -PackageName cmake.install -Executable cmake.exe; \
-    Install-ChocolateyPackage -PackageName wixtoolset  -Cleanup; \
+    Install-ChocolateyPackage -PackageName wixtoolset  -Cleanup
+
+# Install Win 10 SDK
 COPY containerFiles/win10sdk.psm1 containerFiles/win10sdk.psm1
 RUN Import-Module ./containerFiles/win10sdk.psm1; \
-    Install-Win10Sdk; \
+    Install-Win10Sdk
+
+# install VCpp build tools
 COPY containerFiles/vcBuildTools.psm1 containerFiles/vcBuildTools.psm1
 RUN Import-Module ./containerFiles/vcBuildTools.psm1; \   
     Install-VcBuildTools
+
+# copy tests to verify containter     
 COPY containerTests/ containerFiles/tests/
