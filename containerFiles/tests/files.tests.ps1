@@ -14,9 +14,9 @@ function Get-File
 
 Describe "Verify containers contain expected files" {
     $repos = @(
-        @{
+        <# TODO: find test for win10 SDK@{
             file = (Get-File -filter "${env:ProgramFiles(x86)}\Windows Kits\10\Include\activation.h")
-        }
+        }#>
         @{
             file = (Get-File -filter "${env:ProgramFiles(x86)}\Microsoft Visual C++ Build Tools\vcbuildtools.bat")
         }
