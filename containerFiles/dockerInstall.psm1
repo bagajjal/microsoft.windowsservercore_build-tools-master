@@ -34,7 +34,7 @@ function Install-ChocolateyPackage
     }
 
     Write-Verbose "Installing $PackageName..." -Verbose
-    choco install -y $PackageName --execution-timeout=$ExecutionTimeout $ArgumentList
+    choco install -y $PackageName --no-progress --execution-timeout=$ExecutionTimeout $ArgumentList
 
     if($executable)
     {
