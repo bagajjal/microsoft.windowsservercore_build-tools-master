@@ -1,3 +1,4 @@
+# escape=`
 FROM microsoft/powershell:windowsservercore
 LABEL maintainer='Travis Plunk <github@ez13.net>'
 LABEL readme.md="https://github.com/TravisEz13/microsoft.windowsservercore_build-tools/blob/master/readme.md"
@@ -5,12 +6,32 @@ LABEL description="This Dockerfile for Windows Server Core with various build to
 
 SHELL ["powershell"]
 # Install Git, NuGet, cMake and WixToolSet
+# Git installs to C:\Program Files\Git
+# nuget installs to C:\ProgramData\chocolatey\bin\NuGet.exe
+# Cmake installs to C:\Program Files\CMake\
 COPY containerFiles/dockerInstall.psm1 containerFiles/dockerInstall.psm1
 RUN Import-Module ./containerFiles/dockerInstall.psm1; \
     Install-ChocolateyPackage -PackageName git -Executable git.exe; \
     Install-ChocolateyPackage -PackageName nuget.commandline -Executable nuget.exe; \
-    Install-ChocolateyPackage -PackageName cmake.install -Executable cmake.exe; \
-    Install-ChocolateyPackage -PackageName wixtoolset  -Cleanup
+    Install-ChocolateyPackage -PackageName cmake.install -Executable cmake.exe
+
+FROM microsoft/powershell:windowsservercore
+LABEL maintainer='Travis Plunk <github@ez13.net>'
+LABEL readme.md="https://github.com/TravisEz13/microsoft.windowsservercore_build-tools/blob/master/readme.md"
+LABEL description="This Dockerfile for Windows Server Core with various build tools installed.  See readme on docker hub for licensing."
+
+COPY --from=0 C:/Program Files/Git/ C:/Program Files/Git/
+COPY --from=0 C:/Program Files/CMake/ C:/Program Files/CMake/
+COPY --from=0 C:/ProgramData/chocolatey/bin/ C:/ProgramData/chocolatey/bin/
+
+# Setup the path
+COPY containerFiles/dockerInstall.psm1 containerFiles/dockerInstall.psm1
+RUN Import-Module ./containerFiles/dockerInstall.psm1; \
+    Append-Path -path C:\Program Files\Git; \
+    Append-Path -path C:\Program Files\CMake; \
+    Append-Path -path C:/ProgramData/chocolatey/bin/; \
+    Install-ChocolateyPackage -PackageName wixtoolset  -Cleanup -ExecutionTimeout 5400
+
 
 # Install Win 10 SDK
 COPY containerFiles/win10sdk.psm1 containerFiles/win10sdk.psm1
