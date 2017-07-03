@@ -21,7 +21,10 @@ function Install-ChocolateyPackage
         $ArgumentList,
 
         [switch]
-        $Cleanup
+        $Cleanup,
+
+        [int]
+        $ExecutionTimeout = 2700
     )
 
     if(-not(Get-Command -name Choco -ErrorAction SilentlyContinue))
@@ -31,12 +34,10 @@ function Install-ChocolateyPackage
     }
 
     Write-Verbose "Installing $PackageName..." -Verbose
-    choco install -y $PackageName $ArgumentList
+    choco install -y $PackageName --execution-timeout=$ExecutionTimeout $ArgumentList
 
     if($executable)
     {
-        $machinePathString = [System.Environment]::GetEnvironmentVariable('path',[System.EnvironmentVariableTarget]::Machine)
-        $machinePath = $machinePathString -split ';'
         Write-Verbose "Verifing $Executable is in path..." -Verbose
         $exeSource = $null
         $exeSource = Get-ChildItem -path "$env:ProgramFiles\$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
@@ -61,22 +62,34 @@ function Install-ChocolateyPackage
         }
 
         $exePath = Split-Path -Path $exeSource
-        if($machinePath -inotcontains $exePath)
-        {
-            $newPath = "$machinePathString;$exePath"
-            Write-Verbose "Adding $exePath to path..." -Verbose
-            [System.Environment]::SetEnvironmentVariable('path',$newPath,[System.EnvironmentVariableTarget]::Machine)
-        }
-        else 
-        {
-            Write-Verbose "$exePath already in path." -Verbose
-        }
+        Append-Path -path $exePath
     }
 
     if($Cleanup.IsPresent)
     {
         Remove-Folder -Folder "$env:temp\chocolatey"
     }
+}
+
+function Append-Path
+{
+    param
+    (
+        $path
+    )
+    $machinePathString = [System.Environment]::GetEnvironmentVariable('path',[System.EnvironmentVariableTarget]::Machine)
+    $machinePath = $machinePathString -split ';'
+
+    if($machinePath -inotcontains $path)
+    {
+        $newPath = "$machinePathString;$path"
+        Write-Verbose "Adding $path to path..." -Verbose
+        [System.Environment]::SetEnvironmentVariable('path',$newPath,[System.EnvironmentVariableTarget]::Machine)
+    }
+    else 
+    {
+        Write-Verbose "$path already in path." -Verbose
+    }    
 }
 
 function Remove-Folder
