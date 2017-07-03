@@ -14,7 +14,7 @@ function Get-File
 
 Describe "Verify containers contain expected files" {
     $repos = @(
-        {
+        @{
             file = (Get-File -filter "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64\mc.exe")
         }
         @{
