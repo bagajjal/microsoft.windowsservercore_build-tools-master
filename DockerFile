@@ -22,6 +22,7 @@ RUN Import-Module ./containerFiles/wix.psm1; `
     Install-WixZip -zipPath \wix.Zip
 
 # Install Win 10 SDK
+COPY containerFiles/sdkCommon.psm1 containerFiles/sdkCommon.psm1
 COPY containerFiles/win10sdk.psm1 containerFiles/win10sdk.psm1
 RUN Import-Module ./containerFiles/win10sdk.psm1; `
     Install-Win10Sdk
