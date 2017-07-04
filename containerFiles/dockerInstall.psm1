@@ -77,6 +77,7 @@ function Append-Path
         $newPath = "$machinePathString;$path"
         Write-Verbose "Adding $path to path..." -Verbose
         [System.Environment]::SetEnvironmentVariable('path',$newPath,[System.EnvironmentVariableTarget]::Machine)
+        Write-Verbose "Added $path to path." -Verbose
     }
     else 
     {
