@@ -1,4 +1,5 @@
 Import-Module "$PSScriptRoot\dockerInstall.psm1"
+Import-Module "$PSScriptRoot\sdkCommon.psm1"
 
 $cmdContents = @"
 @echo off
