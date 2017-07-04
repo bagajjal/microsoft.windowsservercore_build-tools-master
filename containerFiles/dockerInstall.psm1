@@ -1,11 +1,3 @@
-$programDefinition = @"
-class Program 
-{
-  static void Main(string[] args)
-  {
-  }
-}
-"@
 function Install-ChocolateyPackage
 {
     param(
