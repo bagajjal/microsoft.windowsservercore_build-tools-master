@@ -13,7 +13,7 @@ COPY containerFiles/dockerInstall.psm1 containerFiles/dockerInstall.psm1
 RUN Import-Module ./containerFiles/dockerInstall.psm1; `
     Install-ChocolateyPackage -PackageName git -Executable git.exe; `
     Install-ChocolateyPackage -PackageName nuget.commandline -Executable nuget.exe; `
-    Install-ChocolateyPackage -PackageName cmake.install -Executable cmake.exe
+    Install-ChocolateyPackage -PackageName cmake.install -Executable cmake.exe -Cleanup
 
 # Install Win 10 SDK
 ADD https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311-binaries.zip /wix.zip
@@ -33,6 +33,7 @@ RUN Import-Module ./containerFiles/vcBuildTools.psm1; `
 
 # copy tests to verify containter     
 COPY containerTests/ containerFiles/tests/
+ENTRYPOINT ["powershell", "-c"]
 
 
 #FROM microsoft/powershell:windowsservercore
