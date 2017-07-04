@@ -1,5 +1,15 @@
 Import-Module "$PSScriptRoot\dockerInstall.psm1"
 
+# C# program used in Install-FakeNetExe
+$programDefinition = @"
+class Program 
+{
+  static void Main(string[] args)
+  {
+  }
+}
+"@
+
 function Remove-Win10SdkPackageCache
 {
     Remove-Folder "$env:ProgramData\Package Cache"
