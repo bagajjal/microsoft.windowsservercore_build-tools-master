@@ -21,7 +21,7 @@ Describe "Verify containers contain expected files" {
             file = (Get-File -filter "${env:ProgramFiles(x86)}\Microsoft Visual C++ Build Tools\vcbuildtools.bat")
         }
         @{
-            file = (Get-File -filter "${env:ProgramFiles(x86)}\WiX Toolset v3.10\bin\heat.exe")
+            file = (Get-File -filter "${env:ProgramFiles(x86)}\WiX Toolset xcopy\bin\heat.exe")
         }
     )
 
