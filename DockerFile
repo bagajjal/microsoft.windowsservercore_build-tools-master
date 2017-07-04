@@ -10,11 +10,17 @@ SHELL ["powershell"]
 # nuget installs to C:\ProgramData\chocolatey\bin\NuGet.exe
 # Cmake installs to C:\Program Files\CMake\
 COPY containerFiles/dockerInstall.psm1 containerFiles/dockerInstall.psm1
+ADD https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311-binaries.zip wix.zip
 RUN Import-Module ./containerFiles/dockerInstall.psm1; `
     Install-ChocolateyPackage -PackageName git -Executable git.exe; `
     Install-ChocolateyPackage -PackageName nuget.commandline -Executable nuget.exe; `
-    Install-ChocolateyPackage -PackageName cmake.install -Executable cmake.exe; `
-    Install-ChocolateyPackage -PackageName wixtoolset  -Cleanup -ExecutionTimeout 5400
+    Install-ChocolateyPackage -PackageName cmake.install -Executable cmake.exe
+
+# Install Win 10 SDK
+ADD https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311-binaries.zip /wix.zip
+COPY containerFiles/wix.psm1 containerFiles/wix.psm1  
+RUN Import-Module ./containerFiles/wix.psm1; `
+    Install-WixZip -zipPath \wix.Zip
 
 # Install Win 10 SDK
 COPY containerFiles/win10sdk.psm1 containerFiles/win10sdk.psm1
