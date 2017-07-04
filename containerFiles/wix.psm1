@@ -1,3 +1,5 @@
+Import-Module "$PSScriptRoot\dockerInstall.psm1"
+
 function Install-WixZip
 {
     param($zipPath)
@@ -15,4 +17,5 @@ function Install-WixZip
     $sdkTargetPath = Join-Path -Path $targetRoot -ChildPath 'sdk'
     Move-Item -Path $docExpandPath -Destination $docTargetPath
     Move-Item -Path $sdkExpandPath -Destination $sdkTargetPath
+    Append-Path -path $binPath
 }
