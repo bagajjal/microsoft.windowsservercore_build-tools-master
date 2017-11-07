@@ -4,7 +4,7 @@ LABEL maintainer='Travis Plunk <github@ez13.net>'
 LABEL readme.md="https://github.com/TravisEz13/microsoft.windowsservercore_build-tools/blob/master/readme.md"
 LABEL description="This Dockerfile for Windows Server Core with various build tools installed.  See readme on docker hub for licensing."
 
-SHELL ["powershell"]
+SHELL ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-command"]
 # Install Git, NuGet, cMake and WixToolSet
 # Git installs to C:\Program Files\Git
 # nuget installs to C:\ProgramData\chocolatey\bin\NuGet.exe
