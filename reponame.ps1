@@ -1,1 +1,1 @@
-return 'travisez13/microsoft.windowsservercore.build-tools'
+return 'travisez13/openssh-docker.build-tools'
