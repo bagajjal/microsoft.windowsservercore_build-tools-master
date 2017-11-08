@@ -16,7 +16,10 @@ function Install-ChocolateyPackage
         $Cleanup,
 
         [int]
-        $ExecutionTimeout = 2700
+        $ExecutionTimeout = 2700,
+
+        [string]
+        $Version
     )
 
     if(-not(Get-Command -name Choco -ErrorAction SilentlyContinue))
@@ -26,7 +29,12 @@ function Install-ChocolateyPackage
     }
 
     Write-Verbose "Installing $PackageName..." -Verbose
-    choco install -y $PackageName --no-progress --execution-timeout=$ExecutionTimeout $ArgumentList
+    $extraCommand = @()
+    if($Version)
+    {
+        $extraCommand += '--version', $version
+    }
+    choco install -y $PackageName --no-progress --execution-timeout=$ExecutionTimeout $ArgumentList $extraCommands
 
     if($executable)
     {

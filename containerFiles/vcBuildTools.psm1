@@ -32,10 +32,8 @@ function Set-SdkEnv
 
 function Install-VcBuildTools
 {
-    Install-ChocolateyPackage -PackageName vcbuildtools -ArgumentList @(
-        '-ia'
-        '"/InstallSelectableItems VisualCppBuildTools_ATLMFC_SDK;VisualCppBuildTools_NETFX_SDK"'
-    )
+    choco source add -n=pwsh -s="https://powershell.myget.org/F/chocolatey/api/v2"
+    Install-ChocolateyPackage -PackageName 'visualstudio2017buildtools' -Version '15.4.26430.20170605'
     Set-SdkEnv
     Remove-Win10SdkPackageCache
 }
