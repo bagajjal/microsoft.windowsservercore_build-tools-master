@@ -22,7 +22,7 @@ RUN Invoke-WebRequest "https://aka.ms/vs/15/release/vs_BuildTools.exe" -OutFile 
 RUN setx /M PATH $($Env:PATH + ';' + ${Env:ProgramFiles(x86)} + '\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin')
 
 # Install Visual Studio 2015
-RUN Invoke-WebRequest "https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe" -OutFile vs_BuildTools_2015.exe -UseBasicParsing; \
+RUN Invoke-WebRequest "http://go.microsoft.com/fwlink/?LinkId=691126" -OutFile vs_BuildTools_2015.exe -UseBasicParsing; \
     Start-Process -FilePath 'vs_BuildTools_2015.exe' -ArgumentList '/Full', '/NoRestart', '/Q' -Wait; \
     Remove-Item .\vs_BuildTools_2015.exe ;
 
