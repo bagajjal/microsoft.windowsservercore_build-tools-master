@@ -1,1 +1,1 @@
-return 'balu1202/openssh-docker.build-tools'
+return 'balu1202/winservercore_openssh'

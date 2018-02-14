@@ -2,9 +2,28 @@ FROM microsoft/windowsservercore
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
+# Install git, cmake
+COPY containerFiles/dockerInstall.psm1 containerFiles/dockerInstall.psm1
+RUN Import-Module ./containerFiles/dockerInstall.psm1 -Force; \
+    Install-ChocolateyPackage -PackageName git -Executable git.exe; \
+    Install-ChocolateyPackage -PackageName cmake.install -Executable cmake.exe -Cleanup
+
+# Install Win 10 SDK
+COPY containerFiles/sdkCommon.psm1 containerFiles/sdkCommon.psm1
+COPY containerFiles/win10sdk.psm1 containerFiles/win10sdk.psm1
+RUN Import-Module ./containerFiles/win10sdk.psm1; \
+    Install-Win10Sdk;
+
+# Install Visual Studio 2017
 RUN Invoke-WebRequest "https://aka.ms/vs/15/release/vs_BuildTools.exe" -OutFile vs_BuildTools.exe -UseBasicParsing ; \
-	Start-Process -FilePath 'vs_BuildTools.exe' -ArgumentList '--quiet', '--norestart', '--locale en-US', '--add Microsoft.VisualStudio.Component.VC.Tools.ARM', '--add Microsoft.VisualStudio.Component.VC.Tools.ARM64', '--includeRecommended', '--add Microsoft.VisualStudio.Workload.VCTools', '--add Microsoft.VisualStudio.Component.Windows10SDK.16299.Desktop.arm' -Wait ; \
-	Remove-Item .\vs_BuildTools.exe ; \
-	Remove-Item -Force -Recurse 'C:\Program Files (x86)\Microsoft Visual Studio\Installer'
+    Start-Process -FilePath 'vs_BuildTools.exe' -ArgumentList '--quiet', '--norestart', '--locale en-US', '--add Microsoft.VisualStudio.Component.VC.Tools.ARM', '--add Microsoft.VisualStudio.Component.VC.Tools.ARM64', '--includeRecommended', '--add Microsoft.VisualStudio.Workload.VCTools', '--add Microsoft.VisualStudio.Component.Windows10SDK.16299.Desktop.arm' -Wait ; \
+    Remove-Item .\vs_BuildTools.exe ; \
+    Remove-Item -Force -Recurse 'C:\Program Files (x86)\Microsoft Visual Studio\Installer';
 RUN setx /M PATH $($Env:PATH + ';' + ${Env:ProgramFiles(x86)} + '\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin')
+
+# Install Visual Studio 2015
+RUN Invoke-WebRequest "https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe" -OutFile vs_BuildTools_2015.exe -UseBasicParsing; \
+    Start-Process -FilePath 'vs_BuildTools_2015.exe' -ArgumentList '/Full', '/NoRestart', '/Q' -Wait; \
+    Remove-Item .\vs_BuildTools_2015.exe ;
+
 ENTRYPOINT ["powershell", "-c"]
