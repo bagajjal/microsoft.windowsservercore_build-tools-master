@@ -1,10 +1,11 @@
-FROM mcr.microsoft.com/windows/servercore:ltsc2019
+FROM mcr.microsoft.com/windows/servercore:ltsc2016
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
 # Install git, cmake
 COPY containerFiles/dockerInstall.psm1 containerFiles/dockerInstall.psm1
 RUN Import-Module ./containerFiles/dockerInstall.psm1 -Force; \
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; \
     Install-ChocolateyPackage -PackageName git -Executable git.exe; \
     Install-ChocolateyPackage -PackageName cmake.install -Executable cmake.exe -Cleanup
 
